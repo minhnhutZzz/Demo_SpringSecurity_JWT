@@ -1,0 +1,17 @@
+package vn.iotstar.Demo3.service;
+
+import java.util.List;
+
+import vn.iotstar.Demo3.entity.Product;
+
+public interface ProductServices {
+
+	void delete(Long id);
+
+	Product get(Long id);
+
+	Product save(Product product);
+
+	List<Product> listAll();
+
+}
