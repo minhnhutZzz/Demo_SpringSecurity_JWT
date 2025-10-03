@@ -1,0 +1,109 @@
+/* Reset cơ bản */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Toàn bộ body */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f4ff, #e3f2fd);
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Tiêu đề */
+h1 {
+    color: #2c3e50;
+    margin: 20px 0 10px;
+    font-size: 22px;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+}
+
+/* Form group */
+.form-group {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Input */
+input {
+    padding: 8px 12px;
+    margin: 5px 5px 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+
+input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+/* Button */
+button {
+    padding: 8px 15px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    font-weight: 500;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* Danh sách hiển thị */
+ul {
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+}
+
+ul li {
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+ul li:hover {
+    transform: scale(1.02);
+    border-color: #007bff;
+}
+
+/* Form ẩn */
+.hidden {
+    display: none;
+}
+
+/* Nút cập nhật & xóa */
+button:nth-of-type(2) {
+    background: #ffc107;
+    color: #333;
+}
+
+button:nth-of-type(2):hover {
+    background: #e0a800;
+}
+
+button:nth-of-type(3) {
+    background: #dc3545;
+}
+
+button:nth-of-type(3):hover {
+    background: #b02a37;
+}

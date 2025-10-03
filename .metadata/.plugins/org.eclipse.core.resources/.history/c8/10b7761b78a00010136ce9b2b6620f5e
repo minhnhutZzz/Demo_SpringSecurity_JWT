@@ -1,0 +1,70 @@
+package vn.iotstar.Demo3.controller;
+
+import java.util.List;
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import vn.iotstar.Demo4.entity.Product;
+import vn.iotstar.Demo4.service.ProductServices;
+
+@Controller
+public class LoginController {
+
+    @Autowired
+    private ProductServices service;
+
+    @PostMapping("/login_success_handler")
+    public String loginSuccessHandler() {
+        System.out.println("Logging user login success...");
+        return "index";  // Chuyển hướng đến trang chủ
+    }
+
+    @PostMapping("/login_failure_handler")
+    public String loginFailureHandler() {
+        System.out.println("Login failure handler....");
+        return "login";  // Trở lại trang đăng nhập nếu thất bại
+    }
+
+    @RequestMapping("/")
+    public String viewHomePage(Model model) {
+        List<Product> listProducts = service.listAll();
+        model.addAttribute("listProducts", listProducts);  // Gửi danh sách sản phẩm tới view
+        return "index";  // Trả về trang chủ
+    }
+
+    @RequestMapping("/new")
+    public String showNewProductForm(Model model, @ModelAttribute("product") Product product) {
+        model.addAttribute("product", product);  // Đưa đối tượng product vào model
+        return "new_product";  // Trả về trang tạo mới sản phẩm
+    }
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String saveProduct(@ModelAttribute("product") Product product) {
+        service.save(product);  // Lưu sản phẩm
+        return "redirect:/";  // Chuyển hướng về trang chủ
+    }
+
+    @RequestMapping("/edit/{id}")
+    public ModelAndView showEditProductForm(@PathVariable(name = "id") Long id) {
+        ModelAndView mav = new ModelAndView("edit_product");  // Trả về trang sửa sản phẩm
+        Product product = service.get(id);  // Lấy sản phẩm từ DB
+        mav.addObject("product", product);  // Đưa đối tượng product vào model
+        return mav;
+    }
+
+    @RequestMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable(name = "id") Long id) {
+        service.delete(id);  // Xóa sản phẩm khỏi DB
+        return "redirect:/";  // Chuyển hướng về trang chủ
+    }
+}

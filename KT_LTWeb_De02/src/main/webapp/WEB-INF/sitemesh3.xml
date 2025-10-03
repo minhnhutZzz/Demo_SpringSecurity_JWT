@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sitemesh>
+	<mapping path="/*" name="web" decorator="web.jsp" />
+	<!-- Exclude path from decoration. -->
+	<mapping path="/api*" exclude="true" />
+	<mapping path="/views/login_23110282.jsp" exclude="true" />
+	<mapping path="/views/RegisterSession_23110282.jsp" exclude="true" />
+	<mapping path="/views/logout_23110282.jsp" exclude="true" />
+</sitemesh>

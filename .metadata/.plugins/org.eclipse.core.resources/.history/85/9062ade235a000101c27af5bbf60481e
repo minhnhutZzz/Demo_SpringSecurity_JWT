@@ -1,0 +1,25 @@
+package vn.iotstar.Demo2.restcontroller;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import lombok.RequiredArgsConstructor;
+import vn.iotstar.Demo2.entity.UserInfo;
+import vn.iotstar.Demo2.service.UserService;
+
+@RestController
+@RequestMapping("/user")
+@RequiredArgsConstructor
+public class CustomerController {
+
+    private final UserService userService;
+
+    @PostMapping("/new")
+    @Bean(name = "customerControllerDemo2")
+    public String addUser(@RequestBody UserInfo userInfo) {
+        return userService.addUser(userInfo); // Gọi phương thức addUser từ UserService
+    }
+}

@@ -1,0 +1,32 @@
+package vn.iotstar.Demo2.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import vn.iotstar.Demo2.entity.UserInfo;
+import vn.iotstar.Demo2.repository.UserInfoRepository;
+
+
+
+public class UserInfoService implements UserDetailsService {
+
+    @Autowired
+    private UserInfoRepository repository;
+
+    // Constructor để inject repository
+    public UserInfoService(UserInfoRepository userInfoRepository) {
+        this.repository = userInfoRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<UserInfo> userInfo = repository.findByName(username); // Tìm người dùng theo tên
+        return userInfo
+                .map(UserInfoUserDetails::new) // Map dữ liệu thành UserDetails
+                .orElseThrow(() -> new UsernameNotFoundException("user not found: " + username)); // Ném exception nếu không tìm thấy
+    }
+}

@@ -1,0 +1,5 @@
+package vn.iotstar.interceptor;
+
+public class AuthInterceptor {
+
+}

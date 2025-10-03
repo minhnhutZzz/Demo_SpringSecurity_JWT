@@ -1,0 +1,33 @@
+spring.application.name=Demo_SpringSecurity
+
+
+# Kết nối SQL Server
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.url=jdbc:sqlserver://localhost:1433;instanceName=MINH_NHUT;databaseName=demo_Springboot;encrypt=true;trustServerCertificate=true
+spring.datasource.username=sa
+spring.datasource.password=123456
+
+# JPA
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+spring.jpa.open-in-view=false
+
+# Cổng kết nối
+server.port=8090
+
+# tắt cache để phát triển nhanh
+spring.thymeleaf.cache=false
+
+# đa ngôn ngữ
+spring.messages.basename=i18n/messages 
+
+spring.web.resources.static-locations=classpath:/static/,classpath:/public/,classpath:/resources/
+
+# Cấu hình Thymeleaf
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.encoding=UTF-8
+

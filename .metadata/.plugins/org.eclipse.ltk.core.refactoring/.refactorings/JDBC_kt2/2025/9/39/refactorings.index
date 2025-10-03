@@ -1,0 +1,13 @@
+1758726528800	Pull up members to 'AuthorDao'
+1758726913510	Delete element
+1758727773837	Pull up members to 'BookDao'
+1758730071891	Delete element
+1758730082574	Delete element
+1758730970831	Pull up members to 'UserDao'
+1758731330573	Pull up members to 'UserDao'
+1758731656589	Pull up members to 'ReviewDao'
+1758732990341	Pull up members to 'UserService'
+1758733661863	Rename type 'AuthorDaoImpl'
+1758733841305	Pull up members to 'AuthorService'
+1758734777678	Pull up members to 'BookService'
+1758735104042	Pull up members to 'ReviewService'

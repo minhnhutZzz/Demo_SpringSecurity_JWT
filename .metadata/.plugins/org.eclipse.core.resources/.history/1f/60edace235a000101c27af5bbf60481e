@@ -1,0 +1,64 @@
+package vn.iotstar.Demo2.service;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import org.springframework.security.core.userdetails.UserDetails;
+
+import vn.iotstar.Demo2.entity.UserInfo;
+
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+public class UserInfoUserDetails implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private String password;
+    private List<GrantedAuthority> authorities;
+
+    // Constructor để ánh xạ từ UserInfo entity sang UserDetails
+    public UserInfoUserDetails(UserInfo userInfo) {
+        this.name = userInfo.getName(); // Lấy tên từ UserInfo
+        this.password = userInfo.getPassword(); // Lấy mật khẩu từ UserInfo
+        this.authorities = Arrays.stream(userInfo.getRoles().split(","))
+            .map(role -> (GrantedAuthority) () -> role) // Phân tách và tạo quyền cho mỗi role
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities; // Trả về danh sách quyền của user
+    }
+
+    @Override
+    public String getPassword() {
+        return password; // Trả về mật khẩu
+    }
+
+    @Override
+    public String getUsername() {
+        return name; // Trả về tên người dùng
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // Trả về trạng thái tài khoản (ví dụ: không hết hạn)
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // Trả về trạng thái khóa tài khoản
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // Trả về trạng thái thông tin đăng nhập không hết hạn
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // Trả về trạng thái tài khoản được kích hoạt
+    }
+}

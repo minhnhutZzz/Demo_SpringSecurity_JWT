@@ -1,0 +1,302 @@
+// Hàm để thực hiện các truy vấn GraphQL
+function fetchGraphQL(query, variables) {
+    return $.ajax({
+        url: window.location.origin + '/graphql', // tự động lấy host+port hiện tại
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ query, variables }),
+        success: function(response) {
+            console.log('Response:', response);
+            if (response.errors) {
+                console.error(response.errors);
+                alert('Lỗi: ' + JSON.stringify(response.errors));
+            }
+            return response.data;
+        }
+    });
+}
+
+// Load sản phẩm sắp xếp theo giá khi tải trang
+$(document).ready(function() {
+    const query = `
+        query {
+            allProductsSortedByPrice {
+                id
+                title
+                price
+            }
+        }
+    `;
+    fetchGraphQL(query).done(function(data) {
+        $('#sortedProducts').empty();
+        if (data ) {
+            data.allProductsSortedByPrice.forEach(product => {
+                $('#sortedProducts').append(`<li>ID: ${product.id} - ${product.title} - $${product.price}</li>`);
+            });
+        } else {
+            $('#sortedProducts').append('<li>Không có sản phẩm nào.</li>');
+        }
+    });
+});
+
+// Lấy sản phẩm theo Category ID
+function fetchProductsByCategory() {
+    const categoryId = $('#categoryId').val();
+    const query = `
+        query($categoryId: ID!) {
+            productsByCategory(categoryId: $categoryId) {
+                id
+                title
+                price
+            }
+        }
+    `;
+    fetchGraphQL(query, { categoryId }).done(function(data) {
+        $('#categoryProducts').empty();
+        if (data && data.productsByCategory) {
+            data.productsByCategory.forEach(product => {
+                $('#categoryProducts').append(`<li>ID: ${product.id} - ${product.title} - $${product.price}</li>`);
+            });
+        } else {
+            $('#categoryProducts').append('<li>Không có sản phẩm nào trong danh mục này.</li>');
+        }
+    });
+}
+
+// ================= CRUD USER =================
+function createUser() {
+    const query = `
+        mutation($fullname: String!, $email: String!, $password: String!, $phone: String) {
+            createUser(fullname: $fullname, email: $email, password: $password, phone: $phone) {
+                id
+                fullname
+            }
+        }
+    `;
+    const variables = {
+        fullname: $('#userFullname').val(),
+        email: $('#userEmail').val(),
+        password: $('#userPassword').val(),
+        phone: $('#userPhone').val()
+    };
+    fetchGraphQL(query, variables).done(function(data) {
+        alert('Tạo User thành công với ID: ' + data.createUser.id);
+        $('#userFullname').val('');
+        $('#userEmail').val('');
+        $('#userPassword').val('');
+        $('#userPhone').val('');
+    });
+}
+
+function showUpdateUserForm() {
+    $('#updateUserForm').removeClass('hidden');
+}
+
+function updateUser() {
+    const id = $('#userIdUpdateDelete').val();
+    const query = `
+        mutation($id: ID!, $fullname: String, $email: String, $password: String, $phone: String) {
+            updateUser(id: $id, fullname: $fullname, email: $email, password: $password, phone: $phone) {
+                id
+                fullname
+            }
+        }
+    `;
+    const variables = {
+        id: parseInt(id),
+        fullname: $('#updateUserFullname').val(),
+        email: $('#updateUserEmail').val(),
+        password: $('#updateUserPassword').val(),
+        phone: $('#updateUserPhone').val()
+    };
+    fetchGraphQL(query, variables).done(function(data) {
+        alert('Cập nhật User thành công với ID: ' + data.updateUser.id);
+        hideUpdateUserForm();
+    });
+}
+
+function deleteUser() {
+    const id = $('#userIdUpdateDelete').val();
+    const query = `
+        mutation($id: ID!) {
+            deleteUser(id: $id)
+        }
+    `;
+    fetchGraphQL(query, { id: parseInt(id) }).done(function() {
+        alert('Xóa User thành công với ID: ' + id);
+        $('#userIdUpdateDelete').val('');
+    });
+}
+
+function hideUpdateUserForm() {
+    $('#updateUserForm').addClass('hidden');
+    $('#updateUserFullname').val('');
+    $('#updateUserEmail').val('');
+    $('#updateUserPassword').val('');
+    $('#updateUserPhone').val('');
+}
+
+// ================= CRUD CATEGORY =================
+function createCategory() {
+    const query = `
+        mutation($name: String!, $images: String) {
+            createCategory(name: $name, images: $images) {
+                id
+                name
+            }
+        }
+    `;
+    const variables = {
+        name: $('#categoryName').val(),
+        images: $('#categoryImages').val()
+    };
+    fetchGraphQL(query, variables).done(function(data) {
+        alert('Tạo Category thành công với ID: ' + data.createCategory.id);
+        $('#categoryName').val('');
+        $('#categoryImages').val('');
+    });
+}
+
+function showUpdateCategoryForm() {
+    $('#updateCategoryForm').removeClass('hidden');
+}
+
+function updateCategory() {
+    const id = $('#categoryIdUpdateDelete').val();
+    const query = `
+        mutation($id: ID!, $name: String, $images: String) {
+            updateCategory(id: $id, name: $name, images: $images) {
+                id
+                name
+            }
+        }
+    `;
+    const variables = {
+        id: parseInt(id),
+        name: $('#updateCategoryName').val(),
+        images: $('#updateCategoryImages').val()
+    };
+    fetchGraphQL(query, variables).done(function(data) {
+        alert('Cập nhật Category thành công với ID: ' + data.updateCategory.id);
+        hideUpdateCategoryForm();
+    });
+}
+
+function deleteCategory() {
+    const id = $('#categoryIdUpdateDelete').val();
+    const query = `
+        mutation($id: ID!) {
+            deleteCategory(id: $id)
+        }
+    `;
+    fetchGraphQL(query, { id: parseInt(id) }).done(function() {
+        alert('Xóa Category thành công với ID: ' + id);
+        $('#categoryIdUpdateDelete').val('');
+    });
+}
+
+function hideUpdateCategoryForm() {
+    $('#updateCategoryForm').addClass('hidden');
+    $('#updateCategoryName').val('');
+    $('#updateCategoryImages').val('');
+}
+
+// ================= CRUD PRODUCT =================
+function createProduct() {
+    const query = `
+        mutation($title: String!, $quantity: Int!, $description: String, $price: Float!, $userid: ID!, $categoryIds: [ID!]) {
+            createProduct(title: $title, quantity: $quantity, description: $description, price: $price, userid: $userid, categoryIds: $categoryIds) {
+                id
+                title
+                price
+            }
+        }
+    `;
+    const categoryIds = $('#productCategoryIds').val().split(',').map(id => parseInt(id.trim()));
+    const variables = {
+        title: $('#productTitle').val(),
+        quantity: parseInt($('#productQuantity').val()),
+        description: $('#productDescription').val(),
+        price: parseFloat($('#productPrice').val()),
+        userid: parseInt($('#productUserId').val()),
+        categoryIds: categoryIds
+    };
+    fetchGraphQL(query, variables).done(function(data) {
+        alert('Tạo Product thành công với ID: ' + data.createProduct.id);
+        $('#productTitle').val('');
+        $('#productQuantity').val('');
+        $('#productDescription').val('');
+        $('#productPrice').val('');
+        $('#productUserId').val('');
+        $('#productCategoryIds').val('');
+    });
+}
+
+function showUpdateProductForm() {
+    $('#updateProductForm').removeClass('hidden');
+}
+
+function updateProduct() {
+    const id = $('#productIdUpdateDelete').val();
+    const query = `
+        mutation($id: ID!, $title: String, $quantity: Int, $description: String, $price: Float, $userid: ID, $categoryIds: [ID!]) {
+            updateProduct(id: $id, title: $title, quantity: $quantity, description: $description, price: $price, userid: $userid, categoryIds: $categoryIds) {
+                id
+                title
+                price
+            }
+        }
+    `;
+    const categoryIds = $('#updateProductCategoryIds').val().split(',').map(id => parseInt(id.trim()));
+    const variables = {
+        id: parseInt(id),
+        title: $('#updateProductTitle').val(),
+        quantity: parseInt($('#updateProductQuantity').val()),
+        description: $('#updateProductDescription').val(),
+        price: parseFloat($('#updateProductPrice').val()),
+        userid: parseInt($('#updateProductUserId').val()),
+        categoryIds: categoryIds
+    };
+    fetchGraphQL(query, variables).done(function(data) {
+        alert('Cập nhật Product thành công với ID: ' + data.updateProduct.id);
+        hideUpdateProductForm();
+    });
+}
+
+function deleteProduct() {
+    const id = $('#productIdUpdateDelete').val();
+    const query = `
+        mutation($id: ID!) {
+            deleteProduct(id: $id)
+        }
+    `;
+    fetchGraphQL(query, { id: parseInt(id) }).done(function() {
+        alert('Xóa Product thành công với ID: ' + id);
+        $('#productIdUpdateDelete').val('');
+    });
+}
+
+function hideUpdateProductForm() {
+    $('#updateProductForm').addClass('hidden');
+    $('#updateProductTitle').val('');
+    $('#updateProductQuantity').val('');
+    $('#updateProductDescription').val('');
+    $('#updateProductPrice').val('');
+    $('#updateProductUserId').val('');
+    $('#updateProductCategoryIds').val('');
+}
+
+// Xuất hàm ra window cho HTML gọi được
+window.fetchProductsByCategory = fetchProductsByCategory;
+window.createUser = createUser;
+window.showUpdateUserForm = showUpdateUserForm;
+window.updateUser = updateUser;
+window.deleteUser = deleteUser;
+window.createCategory = createCategory;
+window.showUpdateCategoryForm = showUpdateCategoryForm;
+window.updateCategory = updateCategory;
+window.deleteCategory = deleteCategory;
+window.createProduct = createProduct;
+window.showUpdateProductForm = showUpdateProductForm;
+window.updateProduct = updateProduct;
+window.deleteProduct = deleteProduct;
