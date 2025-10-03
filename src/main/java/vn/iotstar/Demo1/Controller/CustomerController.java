@@ -1,0 +1,46 @@
+package vn.iotstar.Demo1.Controller;
+
+import org.springframework.http.ResponseEntity;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import vn.iotstar.Demo1.Model.Customer;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@EnableMethodSecurity
+public class CustomerController {
+    private List<Customer> customers = List.of(
+        Customer.builder().id("001").name("Nguyễn Hữu Trung").email("trungnhspkt@gmail.com").build(),
+        Customer.builder().id("002").name("Hữu Trung").email("truonghuu@gmail.com").build()
+    );
+
+    
+    //Endpoint công khai, không yêu cầu xác thực.
+    @GetMapping("/hello")
+    public ResponseEntity<String> hello() {
+        return ResponseEntity.ok("hello là guest");
+    }
+
+    //Yêu cầu role ADMIN
+    @GetMapping("/customer/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Customer>> customerList() {
+        List<Customer> list = this.customers;
+        return ResponseEntity.ok(list);
+    }
+
+    // Yêu cầu role USER
+    @GetMapping("/customer/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Customer> getCustomer(@PathVariable("id") String id) {
+        List<Customer> customers = this.customers.stream().filter(customer -> customer.getId().equals(id)).collect(Collectors.toList());
+        return ResponseEntity.ok(customers.get(0));
+    }
+}
